@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FilterTest {
     private static WebDriver webDriver = WebDrivers.CHROME_WEB_DRIVER;
@@ -31,17 +33,22 @@ public class FilterTest {
     void filterProductByColor() {
         WebElement color = filterProducts.getFilterProductsBy("Orange", FilterGroup.COLOR);
 
-        assertFilterResultsWereLoaded(color);
-        assertNumberOfProductByFilter(color);
+        color.click();
+        webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        assertFalse(filterProducts.getLoadingElement().isDisplayed());
+
+        int expectedProductNumber = filterProducts.getNumberProductsWereFiltered(color);
+        int actualProductNumber = filterProducts.getProductsContainer().size();
+        assertEquals(expectedProductNumber, actualProductNumber);
 
         List<WebElement> elements = filterProducts.getColorContainer();
-
         elements.forEach((webElement) -> {
             List<WebElement> listOfProductLinks = webElement.findElements(By.tagName("a"))
                     .stream()
                     .filter(webElement1 -> webElement1.getAttribute("href").contains("orange"))
                     .collect(Collectors.toList());
-            Assertions.assertFalse(listOfProductLinks.isEmpty());
+            listOfProductLinks.forEach(webElement1 -> System.out.println(webElement1.getAttribute("href")));
+            assertFalse(listOfProductLinks.isEmpty());
         });
     }
 
@@ -49,25 +56,12 @@ public class FilterTest {
     @Order(1)
     void filterProductBySize() {
         WebElement size = filterProducts.getFilterProductsBy("S", FilterGroup.SIZE);
-        assertFilterResultsWereLoaded(size);
-        assertNumberOfProductByFilter(size);
-    }
-
-    private void assertNumberOfProductByFilter(WebElement webElement) {
-        String productNumberOnFilter = webElement.findElement(By.tagName("span")).getText();
-        int expectedProductNumber = Integer.parseInt(productNumberOnFilter.replace("(", "").replace(")", ""));
-        int actualProductNumber = filterProducts.getProductsContainer().size();
-
-        Assertions.assertEquals(expectedProductNumber, actualProductNumber);
-    }
-    private void assertFilterResultsWereLoaded(WebElement element) {
-        element.click();
+        size.click();
         webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        Assertions.assertFalse(getLoadingElement().isDisplayed());
-    }
+        assertFalse(filterProducts.getLoadingElement().isDisplayed());
 
-    private WebElement getLoadingElement() {
-        return webDriver.findElement(By.id("center_column")).findElement(By.tagName("p"));
+        int expectedProductNumber = filterProducts.getNumberProductsWereFiltered(size);
+        int actualProductNumber = filterProducts.getProductsContainer().size();
+        assertEquals(expectedProductNumber, actualProductNumber);
     }
-
 }

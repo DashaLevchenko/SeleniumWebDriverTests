@@ -10,12 +10,14 @@ import java.util.stream.Collectors;
 public class Categories {
     private WebDriver driver;
 
+    private By topMenu =  By.id("block_top_menu");
+
     public Categories(WebDriver driver) {
         this.driver = driver;
     }
 
     public void clickOnCategoryElement(String category) {
-        List<WebElement> categories = driver.findElement(By.id("block_top_menu"))
+        List<WebElement> categories = driver.findElement(topMenu)
                 .findElement(By.tagName("ul"))
                 .findElements(By.tagName("li"))
                 .stream()
