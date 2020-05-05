@@ -47,7 +47,6 @@ public class FilterTest {
                     .stream()
                     .filter(webElement1 -> webElement1.getAttribute("href").contains("orange"))
                     .collect(Collectors.toList());
-            listOfProductLinks.forEach(webElement1 -> System.out.println(webElement1.getAttribute("href")));
             assertFalse(listOfProductLinks.isEmpty());
         });
     }
