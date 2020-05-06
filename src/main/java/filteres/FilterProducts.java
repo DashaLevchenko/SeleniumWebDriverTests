@@ -4,10 +4,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class FilterProducts {
     private WebDriver driver;
@@ -55,4 +54,10 @@ public class FilterProducts {
                 .findElement(centerColumn);
     }
 
+    public Collection<WebElement> getListOfColorLinks(WebElement webElement) {
+        return webElement.findElements(By.tagName("a"))
+                .stream()
+                .filter(webElement1 -> webElement1.getAttribute("href").contains("orange"))
+                .collect(Collectors.toList());
+    }
 }
